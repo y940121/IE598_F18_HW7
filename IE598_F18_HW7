@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 14 15:36:23 2018
+
+@author: yingzhaocheng
+"""
+import pandas as pd
+import numpy as np
+import pandas as pd
+df_wine = pd.read_csv('https://archive.ics.uci.edu/ml/'
+                         'machine-learning-databases/wine/wine.data',
+                         header=None)
+
+
+from sklearn.model_selection import train_test_split
+X, y = df_wine.iloc[:, 1:14].values, df_wine.iloc[:, 0].values
+X_train, X_test, y_train, y_test =train_test_split(X,y,test_size=0.1,
+                                                   stratify=y,random_state=42)
+
+colum_name = winecsv[0,0:]
+
+# fit a randomforestclassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_val_score
+Nestimator=[5,10,15,20,25,30,50,100,200,500,10000]
+in_sample=[]
+out_sample=[]
+in_sample_score=[]
+
+for k in Nestimator:
+    rf = RandomForestClassifier(n_estimators=k, random_state=2)
+    rf.fit(X_train,y_train)
+    y_pred_out = rf.predict(X_test)
+    y_pred_in = rf.predict(X_train)
+    out_sample_score = accuracy_score(y_test, y_pred_out)
+    in_sample_score = accuracy_score(y_train, y_pred_in)
+    in_sample.append(in_sample_score)
+    out_sample.append(out_sample_score)
+    cv_scores = cross_val_score(rf, X_train, y_train, cv = 10)
+    mean=np.mean(cv_scores)
+    print('n_setimators: %d, in_sample_CV: %.3f'%(k, mean))
+
+
+feat_labels = df_wine.columns[1:]
+forest = RandomForestClassifier(n_estimators=500,random_state=1)
+forest.fit(X_train, y_train)
+importances = forest.feature_importances_
+indices = np.argsort(importances)[::-1]
+column_label_sorted=[]
+for f in range(X_train.shape[1]):
+    column_label_sorted.append(colum_name[indices[f]])
+    print("%2d) %-*s %f" % (f + 1, 30,
+         colum_name[indices[f]],importances[indices[f]]))
+    
+import matplotlib.pyplot as plt    
+plt.title('Feature Importance')
+plt.bar(range(X_train.shape[1]),importances[indices],align='center')
+plt.xticks(range(X_train.shape[1]),column_label_sorted, rotation=90)
+plt.xlim([-1, X_train.shape[1]])
+plt.tight_layout()
+plt.show()
+print("My name is Zhaocheng Ying")
+print("My NetID is: zying4")
+print("I hereby certify that I have read the University policy on Academic Integrity and that I am not in violation.")
+
+
+
+
+
+
+
+
+
+
+
+
